@@ -150,14 +150,14 @@ class PolygonOptionsAPI:
             with gzip.GzipFile(fileobj=io.BytesIO(response['Body'].read())) as gz:
                 df = pd.read_csv(gz)
             
-            print(f"✅ Loaded {len(df)} records from S3: {s3_key}")
+            print(f"Loaded {len(df)} records from S3: {s3_key}")
             return df
             
         except Exception as e:
             if '403' in str(e):
-                print(f"⚠️  Access denied for {data_type} - this data type may not be included in your subscription")
+                print(f"Access denied for {data_type} - this data type may not be included in your subscription")
             else:
-                print(f"❌ Error fetching S3 data: {e}")
+                print(f"Error fetching S3 data: {e}")
             return pd.DataFrame()
     
     def get_stock_price(self, ticker: str, date: str) -> Optional[float]:
