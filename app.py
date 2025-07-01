@@ -614,34 +614,108 @@ if ticker and selected_expiration:
                                     line=dict(color='blue', width=3)
                                 ))
                                 
-                                # Add breakeven line
+                                # Add shaded regions first (so they appear behind everything)
+                                fig.add_hrect(y0=0, y1=max_profit, fillcolor="green", opacity=0.1)
+                                fig.add_hrect(y0=-abs(max_loss), y1=0, fillcolor="red", opacity=0.1)
+                                
+                                # Add horizontal lines without annotations (we'll add text separately)
                                 fig.add_hline(y=0, line_dash="dash", line_color="gray", line_width=1)
-                                fig.add_vline(x=breakeven, line_dash="dash", line_color="orange", 
-                                            annotation_text=f"BE: ${breakeven:.2f}", annotation_position="top left")
+                                fig.add_hline(y=max_profit, line_dash="dot", line_color="green", line_width=2)
+                                fig.add_hline(y=-abs(max_loss), line_dash="dot", line_color="red", line_width=2)
                                 
-                                # Add current price line
+                                # Add vertical lines for breakeven and current price
+                                fig.add_vline(x=breakeven, line_dash="dash", line_color="orange", line_width=2)
                                 if current_price:
-                                    fig.add_vline(x=current_price, line_dash="dash", line_color="green",
-                                                annotation_text=f"Current: ${current_price:.2f}", annotation_position="top right")
+                                    fig.add_vline(x=current_price, line_dash="dash", line_color="green", line_width=2)
                                 
-                                # Add max profit and max loss lines
-                                fig.add_hline(y=max_profit, line_dash="dot", line_color="green", 
-                                            annotation_text=f"Max Profit: ${max_profit:.2f}", annotation_position="right")
-                                fig.add_hline(y=-abs(max_loss), line_dash="dot", line_color="red",
-                                            annotation_text=f"Max Loss: ${abs(max_loss):.2f}", annotation_position="right")
+                                # Add text annotations as separate traces positioned inside the plot area
+                                # Position annotations at 95% of the x-axis range to keep them inside
+                                x_pos_right = price_range[-1] - (price_range[-1] - price_range[0]) * 0.05
+                                x_pos_left = price_range[0] + (price_range[-1] - price_range[0]) * 0.05
+                                
+                                # Max Profit annotation
+                                fig.add_annotation(
+                                    x=x_pos_right,
+                                    y=max_profit,
+                                    text=f"Max Profit: ${max_profit:.2f}",
+                                    showarrow=False,
+                                    bgcolor="rgba(255, 255, 255, 0.8)",
+                                    bordercolor="green",
+                                    borderwidth=1,
+                                    font=dict(color="green", size=12),
+                                    xanchor="right",
+                                    yanchor="middle"
+                                )
+                                
+                                # Max Loss annotation
+                                fig.add_annotation(
+                                    x=x_pos_right,
+                                    y=-abs(max_loss),
+                                    text=f"Max Loss: ${abs(max_loss):.2f}",
+                                    showarrow=False,
+                                    bgcolor="rgba(255, 255, 255, 0.8)",
+                                    bordercolor="red",
+                                    borderwidth=1,
+                                    font=dict(color="red", size=12),
+                                    xanchor="right",
+                                    yanchor="middle"
+                                )
+                                
+                                # Breakeven annotation
+                                fig.add_annotation(
+                                    x=breakeven,
+                                    y=max_profit * 0.8,  # Position it 80% up the chart
+                                    text=f"BE: ${breakeven:.2f}",
+                                    showarrow=True,
+                                    arrowhead=2,
+                                    arrowsize=1,
+                                    arrowwidth=2,
+                                    arrowcolor="orange",
+                                    ax=0,
+                                    ay=-30,
+                                    bgcolor="rgba(255, 255, 255, 0.8)",
+                                    bordercolor="orange",
+                                    borderwidth=1,
+                                    font=dict(color="orange", size=12)
+                                )
+                                
+                                # Current price annotation
+                                if current_price:
+                                    fig.add_annotation(
+                                        x=current_price,
+                                        y=max_profit * 0.6,  # Position it 60% up the chart
+                                        text=f"Current: ${current_price:.2f}",
+                                        showarrow=True,
+                                        arrowhead=2,
+                                        arrowsize=1,
+                                        arrowwidth=2,
+                                        arrowcolor="green",
+                                        ax=0,
+                                        ay=-30,
+                                        bgcolor="rgba(255, 255, 255, 0.8)",
+                                        bordercolor="green",
+                                        borderwidth=1,
+                                        font=dict(color="green", size=12)
+                                    )
+                                
+                                # Update layout with proper margins and y-axis range
+                                y_range_buffer = abs(max_loss) * 0.1  # 10% buffer
                                 
                                 fig.update_layout(
                                     title=f"{spread_name} P&L Diagram",
                                     xaxis_title="Stock Price",
                                     yaxis_title="Profit/Loss ($)",
-                                    height=400,
+                                    height=450,  # Slightly taller for better visibility
                                     showlegend=True,
-                                    hovermode='x unified'
+                                    hovermode='x unified',
+                                    margin=dict(l=80, r=80, t=80, b=60),  # Balanced margins
+                                    yaxis=dict(
+                                        range=[-abs(max_loss) - y_range_buffer, max_profit + y_range_buffer]
+                                    ),
+                                    xaxis=dict(
+                                        range=[price_range[0], price_range[-1]]
+                                    )
                                 )
-                                
-                                # Add shaded regions
-                                fig.add_hrect(y0=0, y1=max_profit, fillcolor="green", opacity=0.1)
-                                fig.add_hrect(y0=-abs(max_loss), y1=0, fillcolor="red", opacity=0.1)
                                 
                                 st.plotly_chart(fig, use_container_width=True)
                                 
