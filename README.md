@@ -3,6 +3,7 @@
 A Streamlit application for viewing historical options chains using Polygon.io data.
 
 ## Quick Start
+Note: Please ensure you have a new environment running with Python==3.11
 
 ### 1. Install Dependencies
 ```bash
