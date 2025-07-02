@@ -3,6 +3,7 @@
 A Streamlit application for viewing historical options chains using Polygon.io data.
 
 ## Quick Start
+Note: Please ensure you have a new environment running with Python==3.11
 
 ### 1. Install Dependencies
 ```bash
@@ -13,8 +14,8 @@ pip install -r requirements.txt
 Create `.env` file with your credentials:
 ```
 POLYGON_API_KEY=your_api_key_here
-POLYGON_S3_ACCESS_KEY=your_s3_access_key_here  # Optional
-POLYGON_S3_SECRET_KEY=your_s3_secret_key_here  # Optional
+POLYGON_S3_ACCESS_KEY=your_s3_access_key_here  
+POLYGON_S3_SECRET_KEY=your_s3_secret_key_here  
 ```
 
 ### 3. Run the App
