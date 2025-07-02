@@ -1,7 +1,6 @@
 """
 Polygon API utilities for fetching options data
-Enhanced with S3 flat files support and Black-Scholes calculations
-Save this file as: utils/polygon_api.py
+S3 flat files support and Black-Scholes calculations
 """
 
 import requests
@@ -18,7 +17,7 @@ from scipy.stats import norm
 import math
 
 class PolygonOptionsAPI:
-    """Enhanced wrapper for Polygon.io Options API with S3 flat files support"""
+    """Simple wrapper for Polygon.io Options API with S3 flat files support"""
     
     def __init__(self, api_key: str, s3_access_key: Optional[str] = None, 
                  s3_secret_key: Optional[str] = None):
